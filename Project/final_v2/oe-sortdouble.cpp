@@ -39,6 +39,8 @@ void initializeVector(std::vector<int16_t> *vec_even, std::vector<int16_t> *vec_
   {
     (*vec_even)[i] = (int16_t)(rand() % max);
     (*vec_odd)[i] = (int16_t)(rand() % max);
+
+    if(i==(m/2)-1 && m%2==1) (*vec_even)[i+1] = (int16_t)(rand() % max);
   }
 }
 
@@ -153,14 +155,14 @@ int main(int argc, char const *argv[])
   std::vector<int16_t> *to_sort_odd = new std::vector<int16_t>(m/2);
   initializeVector(to_sort_even, to_sort_odd, seed, m, max);
   
+  #ifdef DEBUG
+  printVector(to_sort_even);
+  printVector(to_sort_odd);
+  #endif
+
+  // Sort
   auto start = hrclock::now();
-#ifdef DEBUG
-  printVector(to_sort);
-#endif  
   oddEvenSort(to_sort_even, to_sort_odd, m);
-#ifdef DEBUG
-  printVector(to_sort);
-#endif
   auto elapsed = hrclock::now() - start;
   auto usec    = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 
@@ -170,11 +172,17 @@ int main(int argc, char const *argv[])
   std::cout << "OH per cicle: " << (float)overhead/(float)(n_1*2) << std::endl;
 
   std::vector<int16_t> sorted;
-  for (int i = 0; i < to_sort_even->size(); i++)
+  for (int i = 0; i < to_sort_odd->size(); i++)
   {
     sorted.push_back((*to_sort_even)[i]);
     sorted.push_back((*to_sort_odd)[i]);
+
+    if(i==to_sort_odd->size()-1 && i==to_sort_even->size()-2) sorted.push_back((*to_sort_even)[i+1]);
   }
+
+  #ifdef DEBUG
+  printVector(&sorted);
+  #endif
 
   // Checking if it is really sorted
   assert(std::is_sorted(std::begin(sorted), std::end(sorted)));
