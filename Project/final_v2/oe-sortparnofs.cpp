@@ -24,7 +24,7 @@
 using hrclock = std::chrono::high_resolution_clock;
 
 std::vector<Range> ranges;      // Ranges to assign work
-std::atomic<int16_t> cond = 0;  // Exit condition
+std::atomic<int16_t> cond{0};  // Exit condition
 
 Barrier *bar1;                  // Even phase barrier
 Barrier *bar2;                  // Odd phase barrier
